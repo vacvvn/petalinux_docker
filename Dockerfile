@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 # if you don't want default params, you can
 # build with "docker build --build-arg PETA_VERSION=2020.2 --build-arg PETA_RUN_FILE=petalinux-v2020.2-final-installer.run -t petalinux:2020.2 ."
@@ -8,9 +8,9 @@ ARG PETA_DIST_PATH="/home/vivado/dist"
 ARG PETA_INST_PATH="/home/vivado/Xilinx/petalinux"
 
 # repositories
-RUN echo 'deb http://lrepo.module.ru/repository/ubuntu/ bionic main restricted universe multiverse' >/etc/apt/sources.list && \
-echo 'deb http://lrepo.module.ru/repository/ubuntu/ bionic-updates main restricted universe  multiverse' >>/etc/apt/sources.list && \
-echo 'deb http://lrepo.module.ru/repository/ubuntu/ bionic-security main restricted universe multiverse' >>/etc/apt/sources.list
+RUN echo 'deb http://lrepo.module.ru/repository/ubuntu/ xenial main restricted universe multiverse' >/etc/apt/sources.list && \
+echo 'deb http://lrepo.module.ru/repository/ubuntu/ xenial-updates main restricted universe  multiverse' >>/etc/apt/sources.list && \
+echo 'deb http://lrepo.module.ru/repository/ubuntu/ xenial-security main restricted universe multiverse' >>/etc/apt/sources.list
 
 # install dependences:
 RUN apt-get update &&  DEBIAN_FRONTEND=noninteractive apt-get install -y -q \

@@ -81,17 +81,17 @@ RUN adduser --disabled-password --gecos '' --uid 1000 vivado && \
 COPY installer/accept-eula.sh installer/${PETA_RUN_FILE} ${PETA_DIST_PATH}/
 
 # run the install
-RUN chmod a+rwx ${PETA_DIST_PATH}/${PETA_RUN_FILE}
-RUN chmod a+rwx ${PETA_DIST_PATH}/accept-eula.sh 
-RUN mkdir -p ${PETA_INST_PATH}/${PETA_VERSION}
-RUN chmod 775 ${PETA_INST_PATH}/${PETA_VERSION}
-RUN chmod 775 ${PETA_INST_PATH}
-RUN chown -R vivado:vivado /home/vivado 
-RUN cd ${PETA_DIST_PATH}
-  # echo "==========Start installing==============" && \
-RUN sudo -u vivado -i ${PETA_DIST_PATH}/accept-eula.sh ${PETA_DIST_PATH}/${PETA_RUN_FILE} ${PETA_INST_PATH}/${PETA_VERSION}
-RUN  rm -f ${PETA_DIST_PATH}/${PETA_RUN_FILE} ${PETA_DIST_PATH}/accept-eula.sh 
-RUN rm -rf ${PETA_DIST_PATH}
+RUN chmod a+rwx ${PETA_DIST_PATH}/${PETA_RUN_FILE} && \
+ chmod a+rwx ${PETA_DIST_PATH}/accept-eula.sh  && \
+ mkdir -p ${PETA_INST_PATH}/${PETA_VERSION} && \
+ chmod 775 ${PETA_INST_PATH}/${PETA_VERSION} && \
+ chmod 775 ${PETA_INST_PATH} && \
+ chown -R vivado:vivado /home/vivado  && \
+ cd ${PETA_DIST_PATH} && \
+ echo "========== Start installing ==============" && \
+ sudo -u vivado -i ${PETA_DIST_PATH}/accept-eula.sh ${PETA_DIST_PATH}/${PETA_RUN_FILE} ${PETA_INST_PATH}/${PETA_VERSION} && \
+ rm -f ${PETA_DIST_PATH}/${PETA_RUN_FILE} ${PETA_DIST_PATH}/accept-eula.sh  && \
+ rm -rf ${PETA_DIST_PATH}
 
 # make /bin/sh symlink to bash instead of dash:
 RUN echo "dash dash/sh boolean false" | debconf-set-selections

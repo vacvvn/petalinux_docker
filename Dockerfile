@@ -1,10 +1,17 @@
 FROM ubuntu:16.04
 
+#UID пользователя по умолчанию
+ARG UID_val=1000
+#GID пользователя по умолчанию
+ARG GID_val=1000
+#имя пользователя по умолчанию
+ARG LOGIN_str="vivado"
 # if you don't want default params, you can
 # build with "docker build --build-arg PETA_VERSION=2020.2 --build-arg PETA_RUN_FILE=petalinux-v2020.2-final-installer.run -t petalinux:2020.2 ."
 ARG PETA_VERSION="2018.3"
 ARG PETA_RUN_FILE="petalinux-v2018.3-final-installer.run"
-ARG PETA_INST_PATH="/home/vivado/Xilinx/petalinux"
+ARG PETA_INST_PATH="/home/${LOGIN_str}/Xilinx/petalinux"
+
 
 # repositories
 RUN echo 'deb http://lrepo.module.ru/repository/ubuntu/ xenial main restricted universe multiverse' >/etc/apt/sources.list && \
@@ -74,10 +81,11 @@ RUN dpkg --add-architecture i386 && \
 
 RUN  locale-gen en_US.UTF-8 && update-locale
 
-#make a Vivado user
-RUN  adduser --disabled-password --gecos '' --uid 1000 vivado && \
-  usermod -aG sudo vivado && \
-  echo "vivado ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+#make a user. GID и UID будут по умолчанию или из параметров сборки образа
+RUN  groupadd -g ${GID_val} ${LOGIN_str} && \
+  adduser --disabled-password --gecos '' --uid ${UID_val} --gid ${GID_val} ${LOGIN_str} && \
+  usermod -aG sudo ${LOGIN_str} && \
+  echo "${LOGIN_str} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # distributive and eula handler script
 #COPY installer/accept-eula.sh installer/${PETA_RUN_FILE} ${PETA_DIST_PATH}/
@@ -89,10 +97,11 @@ RUN --mount=type=bind,source=installer/,target=/distr/ \
  mkdir -p ${PETA_INST_PATH}/${PETA_VERSION}/main && \
  chmod -R 775 ${PETA_INST_PATH} && \
  chmod -R 777 /tmp && \
- chown -R vivado:vivado /home/vivado  && \
+ chown -R ${LOGIN_str}:${LOGIN_str} /home/${LOGIN_str}  && \
  cd /tmp && \
- sudo -u vivado -i /distr/accept-eula.sh /distr/${PETA_RUN_FILE} ${PETA_INST_PATH}/${PETA_VERSION}/main && \
+ sudo -u ${LOGIN_str} -i /distr/accept-eula.sh /distr/${PETA_RUN_FILE} ${PETA_INST_PATH}/${PETA_VERSION}/main && \
  rm -rf /tmp/* && \
+ # для уменьшения размера можно убрать локальный sstate и bsp из образа.
  tar -xf /distr/sstate-rel-v2018.3.tar.gz  --directory=${PETA_INST_PATH}/${PETA_VERSION}/sstate/ && \
  cp /distr/xilinx-zcu102-v2018.3-final.bsp ${PETA_INST_PATH}/${PETA_VERSION}/bsp/ 
 
@@ -101,11 +110,11 @@ RUN echo "dash dash/sh boolean false" | debconf-set-selections && \
  DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash && \
  rm -rf /distr
 
-USER vivado
-ENV HOME /home/vivado
+USER ${LOGIN_str}
+ENV HOME /home/${LOGIN_str}
 ENV LANG en_US.UTF-8
-RUN mkdir /home/vivado/project
-WORKDIR /home/vivado/project
+RUN mkdir /home/${LOGIN_str}/project
+WORKDIR /home/${LOGIN_str}/project
 
-#add vivado tools to path
-RUN echo "source ${PETA_INST_PATH}/${PETA_VERSION}/main/settings.sh" >> /home/vivado/.bashrc 
+#add ${LOGIN_str} tools to path
+RUN echo "source ${PETA_INST_PATH}/${PETA_VERSION}/main/settings.sh" >> /home/${LOGIN_str}/.bashrc

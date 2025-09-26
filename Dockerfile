@@ -114,7 +114,9 @@ USER ${LOGIN_str}
 ENV HOME /home/${LOGIN_str}
 ENV LANG en_US.UTF-8
 RUN mkdir /home/${LOGIN_str}/project
+# шаблон скрипта сборки компонента
 WORKDIR /home/${LOGIN_str}/project
+COPY --chown=${UID_val}:${GID_val} --chmod=766 installer/component_update.sh /home/${LOGIN_str}/useful_files/component_update.sh
 
 #add ${LOGIN_str} tools to path
 RUN echo "source ${PETA_INST_PATH}/${PETA_VERSION}/main/settings.sh" >> /home/${LOGIN_str}/.bashrc

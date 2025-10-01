@@ -1,4 +1,3 @@
 installer/*.bsp
-installer/*.md5
 installer/*.run
 installer/*.tar.gz

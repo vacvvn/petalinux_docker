@@ -119,4 +119,12 @@ WORKDIR /home/${LOGIN_str}/project
 COPY --chown=${UID_val}:${GID_val} --chmod=766 installer/component_update.sh /home/${LOGIN_str}/useful_files/component_update.sh
 
 #add ${LOGIN_str} tools to path
-RUN echo "source ${PETA_INST_PATH}/${PETA_VERSION}/main/settings.sh" >> /home/${LOGIN_str}/.bashrc
+RUN echo "source ${PETA_INST_PATH}/${PETA_VERSION}/main/settings.sh" >> /home/${LOGIN_str}/.bashrc && \
+echo "echo ---------------------------------------------"  >> /home/${LOGIN_str}/.bashrc && \
+echo "echo 1. You can copy template script component_update.sh from /home/${LOGIN_str}/useful_files into your project directory /home/${LOGIN_str}/project"  >> /home/${LOGIN_str}/.bashrc && \
+echo "echo 2. Rename this script and modify it so as to build your components"  >> /home/${LOGIN_str}/.bashrc && \
+echo "echo 3. Execute the script to start container and build your components"  >> /home/${LOGIN_str}/.bashrc && \
+echo "echo 4. After successful building script can copy resulting binary file to specified directory and create archive from source directory"  >> /home/${LOGIN_str}/.bashrc && \
+echo "echo 5. Also, you can copy /home/${LOGIN_str}/start_container.sh script to /home/${LOGIN_str}/project to start container whith one command"  >> /home/${LOGIN_str}/.bashrc && \
+echo "echo -----------------------------------------------"  >> /home/${LOGIN_str}/.bashrc
+

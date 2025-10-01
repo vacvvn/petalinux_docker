@@ -22,16 +22,21 @@ ___
 - [ug1144](https://docs.amd.com/v/u/2018.3-English/ug1144-petalinux-tools-reference-guide)
 - [ug1157](https://docs.amd.com/v/u/2018.3-English/ug1157-petalinux-tools-command-line-guide)
 # быстрый старт
+- распаковать архив
+```bash
+tar -xf plnx-tools-1.0.0.tar
+```
 - собрать образ:
 ```bash
-	docker image build -t petalinux:2018.3 .
+	cd petalinux2018
+	docker image build -t plnx-tools-1.0.0:latest .
 ```
-- в директории `installer` лежит скрипт запуска контейнера `start_container.sh`. Скрипт монтирует папку, в которой запущен, в контейнер по пути `/home/vivado/project`
+- в директории `installer` лежит скрипт запуска контейнера `start_container.sh`. Скрипт монтирует папку, в которой запущен. Путь монтирования в контейнере: `/home/vivado/project`
 - запустить контейнер
 ```bash
 	docker run -it --rm \
 	--mount type=bind,source=/absolute/path/to/host/folder,target=/home/vivado/project \
-petalinux:2018.3
+plnx-tools-1.0.0:latest
 ```
 - [[#создать проект|создавать проект]] следует в контейнере в директории `/home/vivado/project`
 	- запустить контейнер и в нем давать команды `petalinux-create -t project....`
@@ -54,12 +59,12 @@ petalinux:2018.3
 >Если параметры по умолчанию не подходят, придется пересобирать образ с новыми параметрами.
 >Любой параметр можно изменить либо в Dockerfile, либо задать в виде параметра ком.строки при сборке нового образа. Пример команды для сборки образа:
 > ```bash
-> docker build --build-arg GID_val=1234  --build-arg UID_val=1234 -t petalinux:2018.3 .
+> docker build --build-arg GID_val=1234  --build-arg UID_val=1234 -t plnx-tools-1.0.0:latest .
 > ```
 # сборка образа
 Если не требуется задавать особые параметры, команда сборки образа может выглядеть следующим образом:
 ```bash
-docker build -t petalinux:2018.3 .
+docker build -t plnx-tools-1.0.0:latest .
 ```
 При сборке образа в него копируется файл `bsp` для платы `zcu102`. После запуска контейнера этот файл используется для создания проектов. Если этот файл не требуется, его можно удалить из директории installer и закомментировать соответствующую строку в Dockerfile.
 
@@ -83,7 +88,7 @@ docker build -t petalinux:2018.3 .
 Пример команды запуска контейнера:
 ```bash
 # проектная директория хоста смонтируется в директорию /home/vivado/project контейнера
-docker run -it --rm --mount type=bind,source=/absolute/path/to/project/folder/,target=/home/vivado/project  petalinux:2018.3
+docker run -it --rm --mount type=bind,source=/absolute/path/to/project/folder/,target=/home/vivado/project  plnx-tools-1.0.0:latest
 ```
 # создание, конфигурация и сборка проекта
 Например, внешняя директория хоста смотрирована в контейнер по пути `/home/vivado/project`. Если для создания проекта используется `hdf` файл, то его нужно скопировать в директорию `project`. Предполагается, что `sstate` и `bsp` скопированы в образ и являются локальными для контейнера.
